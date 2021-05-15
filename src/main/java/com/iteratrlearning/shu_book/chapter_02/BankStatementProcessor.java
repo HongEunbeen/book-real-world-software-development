@@ -19,15 +19,14 @@ public class BankStatementProcessor {
         return total;
     }
 
-    public List<BankTransaction> selectInMonth(final Month month){
-        final List<BankTransaction> bankTransactionsInMonth = new ArrayList<>();
-
+    public double calculateTotalInMonth(final Month month){
+        double total = 0d;
         for(final BankTransaction bankTransaction : bankTransactions){
             if(bankTransaction.getDate().getMonth() == month){
-                bankTransactionsInMonth.add(bankTransaction);
+                total +=  bankTransaction.getAmount();
             }
         }
-        return bankTransactionsInMonth;
+        return total;
     }
 
     public double calculateTotalForCategory(final String category){
