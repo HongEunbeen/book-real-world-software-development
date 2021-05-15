@@ -40,7 +40,7 @@ public class BankTransaction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BankTransaction that = (BankTransaction) o;
-        return Double.compare(that.amount, amount) == 0 && 
+        return Double.compare(that.amount, amount) == 0 &&
                 Objects.equals(date, that.date) &&
                 Objects.equals(description, that.description);
     }

@@ -20,6 +20,7 @@ public class BankStatementCSVParser {
     }
 
     public List<BankTransaction> parseLinesFromCSV(final List<String> lines){
+
         final List<BankTransaction> bankTransactions = new ArrayList<>();
         for(final String line : lines){
             bankTransactions.add(paresFromCSV(line));
