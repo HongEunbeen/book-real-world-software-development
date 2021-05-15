@@ -20,7 +20,7 @@ public class BankStatementCSVParserTest {
         final double tolerance = 0.0d;
 
         Assert.assertEquals(expected.getDate(), result.getDate());
-        //Assert.assertEquals(expected.getAmount(), result.getAmount());
+        Assert.assertEquals(expected.getAmount(), result.getAmount(), tolerance);
         Assert.assertEquals(expected.getDescription(), result.getDescription());
     }
 }
