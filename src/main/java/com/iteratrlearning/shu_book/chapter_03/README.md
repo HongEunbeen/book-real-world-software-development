@@ -233,3 +233,182 @@ Null 객체 패턴 : 객체가 존재하지 않을 때 Null 레퍼런스를 반�
 - 장점 : 데이터 형식도 코드 조합성의 장점을 제공해 코드에서 발생하는 오류 범위 줄여줌
 - 단점 : JDK 미 지원으로 외부 라이브러리 사용해야 함
 
+# 빌드 도구 사용
+
+## 빌드 도구 사용 이유
+응용프로그램 실행 위해 프로젝트 코드를 구현 후 자바 컴파일러(javac) 컴파일
+- 여러 파일, 여러 패키지 컴파일 시 어떤 명령?
+- 다른 라이브러리 사용시 디펜던시 어떻게 관리?
+- 프로젝트 WAR, JAR 같은 특정한 형식으로 어떻게 패키징?
+
+🤔 스크립트 만들어 모든 명령어 자동화 하면 되지 않을까?
+- 모든 동료 개발자 스크립트 어떻게 구성되어 있는지 유지보수 위해 이해 필요
+- 소프트웨어 개발 생명 주기 고려
+- 코드 컴파일 후 테스트나 배포는?
+
+이런 문제 해결 위해 ! 빌드 도구 사용!
+
+###빌드 도구 장점
+- 프로젝트에 적용되는 **공통적인 구조 제공**으로 프로젝트 편안하게 받아 들임
+- 응용프로그램 빌드하고 실행하는 반복적, **표준적 작업 설정**
+- 저수준 설정과 초기화 들이는 시간 절약으로 **개발에만 집중 가능**
+- 잘못된 설정, 일부 빌드 과정 생략으로 **오류의 범위 줄임**
+- 공통 빌드 작업 재사용으로 구현할 필요가 없으므로 **시간 절약**
+
+##유명한 빌드 도구
+- 메이븐
+- 그레이들
+### 메이븐
+ 2004년 처음 출시되었고 XML 기반으로 빌드 과정을 정의한다. 메이븡르 이용해 소프트웨어의 디펜던시와 빌드 과정을 작성!
+#### 프로젝트 구조
+유지보수에 도움되는 구조를 처음부터 제공
+- 두 메인 폴더 제공
+  - `src/main/java` : 프로젝트에 필요한 모든 자바 클래스 개발해 저장 폴더
+  - `src/test/java` : 프로젝트의 테스트 코드 개발해 저장 폴더
+- 유용하게 사용할 만한 폴더
+  - `src/main/resources` : 응용프로그램에서 사용하는 추가 자원 포함 폴더
+  - `src/test/resources` : 테스트에서 사용할 추가 자원 포함 폴더
+
+`pom.xml` 파일을 만들어 응용 프로그램 빌드에 필요한 과정 다양한 XML 정의로 지정해 빌드 프로세스 정의
+#### 빌드 파일 예제(`pom.xml`)
+- `project`
+  - pom.xml 파일의 최상위 수준 요소
+- `groupId` 
+  - 프로젝트를 만드는 조직의 고유 식별자 지정
+- `artifactId`
+  - 빌드 과정에서 생성된 부산물의 고유한 기본 이름 지정
+- `packaging`
+  - 부산물에 사용할 패키지 형식(JAR, WAR, EAR 등) 지정
+  - default : JAR
+- `version`
+  - 프로젝트에서 생성하는 부산물 버전 지정
+- `build`
+  - 플러그인, 자원 등 빌드 과정을 가이드하는 다양한 설정 지정
+- `dependencies`
+  - 프로젝트의 디펜던시 목록 지정
+  
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.iteratrlearning</groupId>
+    <artifactId>shu_book</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <jackson.version>2.10.1</jackson.version>
+        <jetty.version>9.4.24.v20191120</jetty.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>clojars.org</id>
+            <url>http://clojars.org/repo</url>
+        </repository>
+    </repositories>
+
+</project>
+
+```
+
+#### 메이븐 명령어
+pom.xml 설정 후 메이븐으로 프로젝트 만들고 패키징 명령어
+- `mvn clean`
+  - 빌드 전 기존 빌드에서 생성된 부산물 정리
+- `mvn compile`
+  - 프로젝트의 소스코드를 컴파일
+  - 기본적으로 생성된 target 폴더에 결과 저장
+- `mvn test`
+  - 컴파일된 소스코드 테스트
+- `mvn package`
+  - 컴파일된 코드를 JAR과 같은 적절한 형식으로 패키징
+
+### 그레이들
+**메이븐의 단점**
+- XML을 이용하기에 작업하기 귀찮고, 가독성 떨어짐
+- XML은 장황한 언어로 유지보수 부담이 존재
+
+**그레이들 장점**
+- 그루비, 코틀린 프로그래밍 언어 등을 이용해 친군한 도메인 특화 언어(DSL) 적용
+  - 더 자연스럽게 빌드 지정, 쉽게 커스터마이즈 가능, 쉽게 이해 가능
+- 캐시, 점진적 컴파일 등 빌드 시간 단축 기능 지원
+
+#### 빌드 파일 예제
+그레이들은 메이븐과 프로젝트 구조 비슷!
+
+- `build.gradle`(`pom.xml`) 파일 선언
+- `setting.gradle` 파일 선언
+  - 여러 프로젝트 빌드와 설정 변수 포함
+  
+```
+plugins {
+    id 'application' 
+}
+
+repositories {
+    mavenCentral() 
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.1' 
+
+    implementation 'com.google.guava:guava:30.0-jre' 
+}
+
+application {
+    mainClass = 'demo.App' 
+}
+```
+메이븐 빌드 파일보다 훨씬 간결!!!
+#### 그레이들 명령어
+그레이들의 각 명령은 태스크로 구성(test,build, clean 등 내장 태스크 실행 or 직접 태스크 정의해 실행!)
+- `gradle clean`
+  - 이전 빌드에서 생성된 파일 정리
+- `gradle build`
+  - 응용프로그램 패키징
+  - 그레이들이 만든 build 폴더에 JAR 생성
+- `gradle test`
+  - 테스트 실행
+- `gradle run`
+  - `application` 플러그인의 `mainClassName`으로 지정된 메인 클래스 실행
+# 정리
+- 개방/패쇄 원칙 이용하면 코드를 바꾸지 않아도 메서드, 클래스의 동작 변경 가능
+- 개방/패쇄 원칙 이용하면 코드가 망가질 가능성이 줄어들며, 기존 코드의 재사용성 높이고, 결합도 높아지므로 코드 유지보수성 개선
+- 많은 매서드 포함하는 갓 인터페이스는 복잡도와 결합도 높인다.
+- 너무 세밀한 메서드를 포함하는 인터페이스는 응집도를 낮춘다.
+- API의 가독성을 높이고 쉽게 이해할 수 있도록 메서드 이름을 서술적으로 만들어야 한다.
+- 연산 결과로 `void`를 반환하면 동작을 테스트하기가 어렵다.
+- 자바의 예외는 문서화, 형식 안정성, 관심사 분리를 촉진한다.
+- 확인된 예외는 불필요한 코드를 추가해야 하므로 되도록 사용하지 않는다.
+- 너무 자세하게 예외를 적용하면 소프트웨어 개발의 생산성이 떨어진다.
+- 노티피케이션 패턴을 이용하면 도메인 클래스로 오류를 수집할 수 있다.
+- 예외를 무시하거나 일반적인 `Exception`을 잡으면 근본적인 문제를 파악하기가 어렵다.
+- 빌드 도구를 사용하면 응용프로그램 빌드, 테스트, 배포 등 소프트웨어 개발 생명 주기 작업을 자동화할 수 있다.
+- 요즘 자바 커뮤니티에서는 빌드 도구로 메이븐과 그레이들을 주로 사용한다.
