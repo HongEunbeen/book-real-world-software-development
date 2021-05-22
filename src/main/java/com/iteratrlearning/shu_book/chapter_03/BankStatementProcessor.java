@@ -6,7 +6,7 @@ import java.util.List;
 
 @FunctionalInterface
 interface BankTransactionSummarizer{
-    double summarize(double accmuilator, BankTransaction bankTransaction);
+    double summarize(double accumulator, BankTransaction bankTransaction);
 }
 
 @FunctionalInterface
