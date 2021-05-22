@@ -15,7 +15,9 @@ public class BankStatementAnalyzer {
         final List<String> lines = Files.readAllLines(path);
 
         final List<BankTransaction> bankTransactions = bankStatementParser.parserLinesFrom(lines);
+
         final BankStatementProcessor bankStatementProcessor = new BankStatementProcessor(bankTransactions);
+        final List<BankTransaction> transactions = bankStatementProcessor.findTransactions(new BankTransactionIsFebruaryAndExpensive());
 
         collectSummary(bankStatementProcessor);
     }
