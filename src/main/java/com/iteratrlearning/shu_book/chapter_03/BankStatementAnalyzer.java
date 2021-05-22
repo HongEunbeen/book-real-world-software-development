@@ -21,7 +21,7 @@ public class BankStatementAnalyzer {
                 bankStatementProcessor.findTransactions(bankTransaction ->
                     bankTransaction.getDate().getMonth() == Month.FEBRUARY
                             && bankTransaction.getAmount() >= 1_000);
-        
+
         collectSummary(bankStatementProcessor);
     }
 
