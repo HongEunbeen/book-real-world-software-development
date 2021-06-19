@@ -1,5 +1,7 @@
 package com.iteratrlearning.shu_book.chapter_04;
 
+import com.iteratrlearning.shu_book.chapter_04.importer.Importer;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -7,10 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
-import static com.iteratrlearning.shu_book.chapter_04.Attricutes.*;
+import static com.iteratrlearning.shu_book.chapter_04.importer.Attributes.*;
 
-public class ImageImporter implements Importer{
-
+public class ImageImporter implements Importer {
     @Override
     public Document importFile(File file) throws IOException {
         final Map<String, String> attributes = new HashMap<>();
