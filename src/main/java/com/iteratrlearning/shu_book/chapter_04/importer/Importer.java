@@ -1,4 +1,6 @@
-package com.iteratrlearning.shu_book.chapter_04;
+package com.iteratrlearning.shu_book.chapter_04.importer;
+
+import com.iteratrlearning.shu_book.chapter_04.Document;
 
 import java.io.File;
 import java.io.IOException;
