@@ -20,14 +20,14 @@ public class BusinessRuleEngineTest {
         final Facts mockFacts = mock(Facts.class);
         final BusinessRuleEngine businessRuleEngine = new BusinessRuleEngine(mockFacts);
 
-        businessRuleEngine.addAction(facts -> {
+        businessRuleEngine.addRule(facts -> {
             final String jobTitle = facts.getFacts("jobTitle");
             if("CEO".equals(jobTitle)){
                 final String name = facts.getFacts("name");
                 System.out.println(name);
             }
         });
-        businessRuleEngine.addAction(facts -> {
+        businessRuleEngine.addRule(facts -> {
             var jobTitle = facts.getFacts("jobTitle");
             if("CEO".equals(jobTitle)){
                 var name = facts.getFacts("name");
@@ -43,32 +43,21 @@ public class BusinessRuleEngineTest {
         //given
         final Facts mockFacts = mock(Facts.class);
         final BusinessRuleEngine businessRuleEngine = new BusinessRuleEngine(mockFacts);
-        final Action mockAction = mock(Action.class);
+
+        final Rule ruleSendEmailToSaleWhenCDO = RuleBuilder
+                .when(facts -> "CEO".equals(facts.getFacts("jobTitle")))
+                .then(facts -> {
+                    var name = facts.getFacts("name");
+                    System.out.println("name");
+                });
 
         //when
-        businessRuleEngine.addAction(mockAction);
+        businessRuleEngine.addRule(ruleSendEmailToSaleWhenCDO);
         businessRuleEngine.run();
 
         //then
-        verify(mockAction).perform(mockFacts);
+        verify(ruleSendEmailToSaleWhenCDO).perform(mockFacts);
     }
-
-    @Test
-    public void shouldPerformAnActionWithFacts(){
-        //given
-        final Action mockAction = mock(Action.class);
-        final Facts mockFacts = mock(Facts.class);
-        final BusinessRuleEngine businessRuleEngine = new BusinessRuleEngine(mockFacts);
-
-        //when
-        businessRuleEngine.addAction(mockAction);
-        businessRuleEngine.run();
-
-        //then
-        verify(mockAction).perform(mockFacts);
-
-    }
-
     @Test
     public void calcForecastedAmountWithFacts(){
         //given
@@ -77,7 +66,7 @@ public class BusinessRuleEngineTest {
         final BusinessRuleEngine businessRuleEngine = new BusinessRuleEngine(mockFacts);
 
         //when
-        businessRuleEngine.addAction(facts -> {
+        businessRuleEngine.addRule(facts -> {
             var forecastedAmount = 0.0;
             var dealStage = Stage.valueOf(facts.getFacts("stage"));
             var amount = Double.parseDouble(facts.getFacts("amount"));
@@ -92,6 +81,23 @@ public class BusinessRuleEngineTest {
 
         //then
         verify(mockAction).perform(mockFacts);
+
+    }
+
+
+    @Test
+    public void shouldPerformWithDomain(){
+        //given
+        final Condition condition = (Facts facts) -> "CEO".equals(facts.getFacts("jobTitle"));
+        final Action action  = (Facts facts) -> {
+            var name = facts.getFacts("name");
+            System.out.println(name);
+        };
+
+        final Rule rule = new DefaultRule(condition, action);
+
+        //then
+        //erify(mockAction).perform(mockFacts);
 
     }
 }
