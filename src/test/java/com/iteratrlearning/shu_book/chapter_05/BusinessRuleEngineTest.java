@@ -81,16 +81,12 @@ public class BusinessRuleEngineTest {
             var forecastedAmount = 0.0;
             var dealStage = Stage.valueOf(facts.getFacts("stage"));
             var amount = Double.parseDouble(facts.getFacts("amount"));
-            switch (dealStage){
-                case LEAD:
-                    forecastedAmount = amount * 0.2; break;
-                case EVALUATING:
-                    forecastedAmount = amount * 0.5; break;
-                case INTERESTED:
-                    forecastedAmount = amount * 0.8; break;
-                case CLOSE:
-                    forecastedAmount = amount; break;
-            }
+           /* var forecastedAmount = amount * switch (dealStage){
+                case LEAD -> 0.2;
+                case EVALUATING -> 0.5;
+                case INTERESTED -> 0.8;
+                case CLOSE -> 1;
+            }*/
             facts.addFacts("forecastedAmount", String.valueOf(forecastedAmount));
         });
 
