@@ -27,7 +27,13 @@ public class BusinessRuleEngineTest {
                 System.out.println(name);
             }
         });
-        businessRuleEngine.addAction(mock(Action.class));
+        businessRuleEngine.addAction(facts -> {
+            var jobTitle = facts.getFacts("jobTitle");
+            if("CEO".equals(jobTitle)){
+                var name = facts.getFacts("name");
+                System.out.println(name);
+            }
+        });
 
         assertEquals(2, businessRuleEngine.count());
     }
